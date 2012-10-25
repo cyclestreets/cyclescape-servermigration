@@ -43,6 +43,13 @@ On the *LIVE* site, disable mail processing, stop the site and create a new back
     sudo service toolkit stop
     sudo -u cyclekit bash /websites/cyclescape/backup/run-backups.sh
 
+Also disable the cyclekit user's crontab which runs the mail ingester every 5 minutes:
+
+    sudo -u cyclekit bash
+    export EDITOR=<yourfavouriteeditor>
+    crontab -e
+    # Then comment out the 5-minutely cron job
+
 Also disable the auto-updating script /root/monitor-update.sh in root's crontab by commenting-out the line with /root/monitor-update.sh in:
 
     sudo crontab -e
