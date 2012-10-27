@@ -13,6 +13,11 @@ https://github.com/cyclestreets/toolkit-chef
 
 Do not use the real mail credentials, as mail should only be processed by the single live installation.
 
+Bring the installation up-to-date using:
+
+    cd /opt/
+    sudo chef-solo -c toolkit-chef/solo.rb -j toolkit-chef/node.json
+
 ## 3. Do a test migration
 
 Use the script in this repository to copy across, and install, the last database backup dump and assets backup dump.
