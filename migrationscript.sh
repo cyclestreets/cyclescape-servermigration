@@ -20,6 +20,12 @@ fi
 echo "Retrieve the backups from ${SOURCESITEIP} as which user?:"
 read SCRIPTUSERNAME
 
+# Clean up any temporary files from any previous script invocation
+echo "Removing temporary files from any previous script invocation"
+sudo -u $SCRIPTUSERNAME rm -f /tmp/cyclescapeDB.sql
+sudo -u $SCRIPTUSERNAME rm -f /tmp/toolkitShared.tar.bz2
+sudo -u $SCRIPTUSERNAME rm -rf /tmp/shared/
+
 # Get the backups (will prompt for password)
 echo "Retrieving the backups..."
 sudo -u $SCRIPTUSERNAME rm -f /tmp/cyclescapeDB.sql.gz
@@ -78,6 +84,6 @@ service apache2 start
 
 # Clean up temporary files
 echo "Removing temporary files"
-#sudo -u $SCRIPTUSERNAME rm -f /tmp/cyclescapeDB.sql
+sudo -u $SCRIPTUSERNAME rm -f /tmp/cyclescapeDB.sql
 sudo -u $SCRIPTUSERNAME rm -f /tmp/toolkitShared.tar.bz2
 sudo -u $SCRIPTUSERNAME rm -rf /tmp/shared/
