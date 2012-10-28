@@ -4,7 +4,7 @@
 
 ### SETTINGS ###
 
-SOURCESITEIP=46.235.224.112
+SOURCESITEIP=93.93.135.180
 SITEOWNER=cyclekit.cyclekit
 
 
@@ -12,9 +12,29 @@ SITEOWNER=cyclekit.cyclekit
 
 # Ensure this script is run as root
 if [ "$(id -u)" != "0" ]; then
-	echo "This script must be run as root" 1>&2
+	echo "This script must be run as root; aborting." 1>&2
 	exit 1
 fi
+
+# Ensure the toolkit-chef recipes and mailbox file are present
+if [ ! -d "/opt/toolkit-chef" ]; then
+	echo "The toolkit-chef recipes are not present in /opt/toolkit-chef"
+	exit 1
+fi
+if [ ! -f "/etc/chef/databags/secrets/mailbox.json" ]; then
+	echo "The file /etc/chef/databags/secrets/mailbox.json is not present"
+	exit 1
+fi
+
+# Bring the chef recipes up-to-date
+echo "Bringing the chef recipes up-to-date"
+cd /opt/toolkit-chef/
+git pull
+
+# Bring the main installation up-to-date
+echo "Bringing the main installation up-to-date"
+cd /opt/
+sudo chef-solo -c toolkit-chef/solo.rb -j toolkit-chef/node.json
 
 # Set the user to retrieve the backups from
 echo "Retrieve the backups from ${SOURCESITEIP} as which user?:"
