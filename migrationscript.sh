@@ -17,7 +17,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Set the user to retrieve the backups from
-echo "Retrieve the backups from ${SOURCESITEIP} as which user? :"
+echo "Retrieve the backups from ${SOURCESITEIP} as which user?:"
 read SCRIPTUSERNAME
 
 # Get the backups (will prompt for password)
@@ -46,6 +46,10 @@ echo "Stopping the Apache and Toolkit services..."
 service apache2 stop
 service toolkit stop
 
+# Wait for a short while to enable any connections to the database to close
+echo "Waiting a short while to enable any connections to the database to close..."
+sleep 20
+
 # Manually drop the db and recreate it
 echo "Creating a clean Postgres database..."
 sudo -u postgres dropdb cyclekit_production
@@ -55,9 +59,15 @@ sudo -u postgres createdb -O cyclekit cyclekit_production
 echo "Importing the toolkit database dump..."
 sudo -u postgres PGOPTIONS='--client-min-messages=warning' psql -X -q -a -v ON_ERROR_STOP=1 --pset pager=off -d cyclekit_production -f /tmp/cyclescapeDB.sql
 
+# Archive any previous user assets folder for safety (though there should be a backup anyway)
+if [ -d "/var/www/toolkit/shared/system/dragonfly/production/" ]; then
+	echo "Archiving previous user assets folder for safety..."
+	timestamp=`date +%s`
+	mv /var/www/toolkit/shared/system/dragonfly/production "/var/www/toolkit/shared/system/dragonfly/production.backup.${timestamp}"
+fi
+
 # Add the user assets
 echo "Adding the user assets..."
-rm -rf /var/www/toolkit/shared/system/dragonfly/production/
 cp -pr /tmp/shared/system/dragonfly /var/www/toolkit/shared/system/
 chown -R $SITEOWNER /var/www/toolkit/shared/system/dragonfly
 
@@ -68,6 +78,6 @@ service apache2 start
 
 # Clean up temporary files
 echo "Removing temporary files"
-sudo -u $SCRIPTUSERNAME rm -f /tmp/cyclescapeDB.sql
+#sudo -u $SCRIPTUSERNAME rm -f /tmp/cyclescapeDB.sql
 sudo -u $SCRIPTUSERNAME rm -f /tmp/toolkitShared.tar.bz2
 sudo -u $SCRIPTUSERNAME rm -rf /tmp/shared/
