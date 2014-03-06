@@ -34,16 +34,7 @@ If all is fine, you can now begin the main migration, as follows.
 
 Although an hourly backup should exist, data in the minutes since then won't be in it. ( https://github.com/cyclestreets/toolkit-chef/blob/master/cookbooks/toolkit-backups/recipes/default.rb#L33 defines the cron task that runs every hour.)
 
-On the *LIVE* site, disable mail processing, stop the site and create a new backup (running as cyclekit) using:
-
-    sudo nano /etc/chef/databags/secrets/mailbox.json
-    sudo cd /opt/
-    sudo chef-solo -c toolkit-chef/solo.rb -j toolkit-chef/node.json
-    sudo service apache2 stop
-    sudo service toolkit stop
-    sudo -u cyclekit bash /websites/cyclescape/backup/run-backups.sh
-
-Also disable the cyclekit user's crontab which runs the mail ingester every 5 minutes:
+On the *LIVE* site, disable the cyclekit user's crontab which runs the mail ingester every 5 minutes:
 
     sudo -u cyclekit bash
     export EDITOR=<yourfavouriteeditor>
@@ -55,6 +46,12 @@ Also disable the auto-updating script /root/monitor-update.sh in root's crontab 
     sudo crontab -e
 
 (Currently that is not part of the chef management - see ticket at ??? )
+
+Then stop the (live) site and create a new backup (running as cyclekit) using:
+
+    sudo service apache2 stop
+    sudo service toolkit stop
+    sudo -u cyclekit bash /websites/cyclescape/backup/run-backups.sh
 
 From this point on, the new server can be safely set running.
 
