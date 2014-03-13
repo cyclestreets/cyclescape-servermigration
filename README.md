@@ -79,6 +79,8 @@ Again, you can check the site is running in your browser on the machine with the
 
 Now that the new server is all correctly set up and running fine, log in to the registrar and switch the IP of the main domain to the new server.
 
+Also, change any variants such as @ for .com/.net.
+
 Remove the /etc/hosts entries on your local machine.
 
 ## 8. Install the auto-updating mechanism
