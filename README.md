@@ -6,10 +6,10 @@ Firstly, before starting, make sure that the TTL of the domain at the registrar 
 
 Do not switch over yet. See section 5 below which will cover that.
 
-## 2. Set up the main toolkit software
+## 2. Set up the main Cyclescape software
 
-To do this, use the toolkit-chef cookbooks at:
-https://github.com/cyclestreets/toolkit-chef
+To do this, use the cyclescape-chef cookbooks at:
+https://github.com/cyclestreets/cyclescape-chef
 
 Do not use the real mail credentials, as mail should only be processed by the single live installation.
 
@@ -32,11 +32,11 @@ If all is fine, you can now begin the main migration, as follows.
 
 ## 4. Stop the live site and run a backup on the source machine
 
-Although an hourly backup should exist, data in the minutes since then won't be in it. ( https://github.com/cyclestreets/toolkit-chef/blob/master/cookbooks/toolkit-backups/recipes/default.rb#L33 defines the cron task that runs every hour.)
+Although an hourly backup should exist, data in the minutes since then won't be in it. ( https://github.com/cyclestreets/cyclescape-chef/blob/master/cookbooks/cyclescape-backups/recipes/default.rb#L33 defines the cron task that runs every hour.)
 
-On the *LIVE* site, disable the cyclekit user's crontab which runs the mail ingester every 5 minutes:
+On the *LIVE* site, disable the cyclescape user's crontab which runs the mail ingester every 5 minutes:
 
-    sudo -u cyclekit bash
+    sudo -u cyclescape bash
     export EDITOR=<yourfavouriteeditor>
     crontab -e
     # Then comment out the 5-minutely cron job
@@ -47,11 +47,11 @@ Also disable the auto-updating script /root/monitor-update.sh in root's crontab 
 
 (Currently that is not part of the chef management - see ticket at ??? )
 
-Then stop the (live) site and create a new backup (running as cyclekit) using:
+Then stop the (live) site and create a new backup (running as cyclescape) using:
 
     sudo service apache2 stop
-    sudo service toolkit stop
-    sudo -u cyclekit bash /websites/cyclescape/backup/run-backups.sh
+    sudo service cyclescape stop
+    sudo -u cyclescape bash /websites/cyclescape/backup/run-backups.sh
 
 From this point on, the new server can be safely set running.
 
@@ -65,13 +65,13 @@ Re-run the migration script, which will bring the new server's installation bang
 
 Now that the original server is no longer processing mail, and we have the latest data, the correct mail credentials should be put in.
 
-As explained at https://github.com/cyclestreets/toolkit-chef , the mailbox.json file needs to be edited. So run:
+As explained at https://github.com/cyclestreets/cyclescape-chef , the mailbox.json file needs to be edited. So run:
 
     sudo nano /etc/chef/databags/secrets/mailbox.json
     cd /opt/
-    sudo chef-solo -c toolkit-chef/solo.rb -j toolkit-chef/node.json
+    sudo chef-solo -c cyclescape-chef/solo.rb -j cyclescape-chef/node.json
 
-Chef will use the values in that file to create the /var/www/toolkit/shared/config/mailboxes.yml file.
+Chef will use the values in that file to create the /var/www/cyclescape/shared/config/mailboxes.yml file.
 
 Again, you can check the site is running in your browser on the machine with the /etc/hosts change. Any recent postings to the site will be visible.
 
