@@ -100,7 +100,7 @@ chown -R $SITEOWNER /var/www/cyclescape/shared/system/dragonfly
 # Start relevant services
 echo "Starting the Apache and Cyclescape services..."
 service cyclescape start
-service cyclescape start
+service apache2 start
 
 # Clean up temporary files
 echo "Removing temporary files"
