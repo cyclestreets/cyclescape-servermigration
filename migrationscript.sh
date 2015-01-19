@@ -101,7 +101,7 @@ sudo -u postgres PGOPTIONS='--client-min-messages=warning' psql -X -q -a -v ON_E
 # # 1. On the OLD machine (where the live site currently is):
 # # Create a "custom-format" dump of the database
 # su cyclescape
-# pg_dump cyclespace_production -Fc -b -v -f /websites/cyclescape/backup/cyclescapeDB-hard.sql
+# pg_dump cyclescape_production -Fc -b -v -f /websites/cyclescape/backup/cyclescapeDB-hard.sql
 # 
 # # 2. On the NEW machine, retrieve the custom-format dump, create the PostGIS functions in the new database as the cyclescape user, and restore using postgis_restore as the cyclescape user:
 # sudo -u $SCRIPTUSERNAME scp $SCRIPTUSERNAME@$SOURCESITEIP:/websites/cyclescape/backup/cyclescapeDB-hard.sql /tmp/
