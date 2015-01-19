@@ -82,6 +82,12 @@ service postgresql restart    # Close any open connections
 sudo -u postgres dropdb cyclescape_production
 sudo -u postgres createdb -O cyclescape cyclescape_production
 
+# If using a dump from an installation of Cyclescape which has the legacy username 'cyclekit' rather than 'cyclescape', do the following:
+# sudo -u postgres createuser cyclekit
+# # Then after the database import, reassign ownership and remove the user:
+# sudo -u cyclescape psql -d cyclescape_production -c "REASSIGN OWNED BY cyclekit TO cyclescape;"
+# sudo -u postgres dropuser cyclekit
+
 # Import the data (quietly - see http://petereisentraut.blogspot.co.uk/2010/03/running-sql-scripts-with-psql.html )
 echo "Importing the Cyclescape database dump..."
 sudo -u postgres PGOPTIONS='--client-min-messages=warning' psql -X -q -a -v ON_ERROR_STOP=1 --pset pager=off -d cyclescape_production -f /tmp/cyclescapeDB.sql
