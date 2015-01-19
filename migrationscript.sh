@@ -1,5 +1,5 @@
 #!/bin/sh
-# Script to migrate Cyclescape data to new machine
+# Script to migrate Cyclescape data to a new machine
 
 
 ### SETTINGS ###
@@ -84,6 +84,25 @@ sudo -u postgres createdb -O cyclescape cyclescape_production
 # Import the data (quietly - see http://petereisentraut.blogspot.co.uk/2010/03/running-sql-scripts-with-psql.html )
 echo "Importing the Cyclescape database dump..."
 sudo -u postgres PGOPTIONS='--client-min-messages=warning' psql -X -q -a -v ON_ERROR_STOP=1 --pset pager=off -d cyclescape_production -f /tmp/cyclescapeDB.sql
+
+# If migrating from an old version of PostGIS (e.g. 1.5) to a new version (e.g. 2.1), it may be required to do a 'hard upgrade'.
+# The Cyclescape dump includes all the PostGIS functions within the cyclescape_production database.
+# If these are imported into an installation with a later PostGIS version, there will be a mismatch.
+# A 'hard upgrade' means a full dump/reload of the PostGIS functions. This is described here: http://postgis.net/docs/postgis_installation.html#hard_upgrade
+# The PostGIS release notes will state whether a hard upgrade is required. If so, follow the procedure outlined at the above URL:
+#
+# # 1. On the OLD machine (where the live site currently is):
+# # Create a "custom-format" dump of the database
+# su cyclescape
+# pg_dump cyclespace_production -Fc -b -v -f /websites/cyclescape/backup/cyclescapeDB-hard.sql
+# 
+# # 2. On the NEW machine, retrieve the custom-format dump, create the PostGIS functions in the new database as the cyclescape user, and restore using postgis_restore as the cyclescape user:
+# sudo -u $SCRIPTUSERNAME scp $SCRIPTUSERNAME@$SOURCESITEIP:/websites/cyclescape/backup/cyclescapeDB-hard.sql /tmp/
+# sudo -u postgres dropdb cyclescape_production
+# sudo -u postgres createdb -O cyclescape cyclescape_production
+# sudo -u cyclescape psql -d cyclescape_production -c "CREATE EXTENSION postgis;"    # Done as cyclescape user so that the spatial_ref_sys table is owned by cyclescape
+# perl /usr/share/postgresql/9.3/contrib/postgis-2.1/postgis_restore.pl "/tmp/cyclescapeDB-hard.sql" | sudo -u cyclescape psql cyclescape_production
+# sudo -u $SCRIPTUSERNAME rm -f /tmp/cyclescapeDB.sql
 
 # Archive any previous user assets folder for safety (though there should be a backup anyway)
 if [ -d "/var/www/cyclescape/shared/system/dragonfly/production/" ]; then
