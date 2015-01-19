@@ -109,7 +109,7 @@ sudo -u postgres PGOPTIONS='--client-min-messages=warning' psql -X -q -a -v ON_E
 # sudo -u postgres createdb -O cyclescape cyclescape_production
 # sudo -u cyclescape psql -d cyclescape_production -c "CREATE EXTENSION postgis;"    # Done as cyclescape user so that the spatial_ref_sys table is owned by cyclescape
 # perl /usr/share/postgresql/9.3/contrib/postgis-2.1/postgis_restore.pl "/tmp/cyclescapeDB-hard.sql" | sudo -u cyclescape psql cyclescape_production
-# sudo -u $SCRIPTUSERNAME rm -f /tmp/cyclescapeDB.sql
+# sudo -u $SCRIPTUSERNAME rm -f /tmp/cyclescapeDB-hard.sql
 
 # Archive any previous user assets folder for safety (though there should be a backup anyway)
 if [ -d "/var/www/cyclescape/shared/system/dragonfly/production/" ]; then
