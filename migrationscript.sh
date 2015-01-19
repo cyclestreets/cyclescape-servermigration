@@ -78,6 +78,7 @@ sleep 20
 
 # Manually drop the db and recreate it
 echo "Creating a clean Postgres database..."
+service postgresql restart    # Close any open connections
 sudo -u postgres dropdb cyclescape_production
 sudo -u postgres createdb -O cyclescape cyclescape_production
 
