@@ -102,4 +102,9 @@ Useful tests to do are:
 * Check that the posting comes through by e-mail (assuming you have mail subscription enabled)
 * Send a reply by e-mail and check it appears on the web interface within 5 minutes
 
+# 10. Additional log files
 
+You may also wish to copy across to, or archive on, the new machine:
+
+* Munin log files directory at /var/lib/munin/cyclescape.org
+* The Rails production.log in /var/www/cyclescape/shared/log/
